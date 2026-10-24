@@ -1,33 +1,16 @@
 workflows:
-  testFlight:
-    name: AYOUBNFAOUI
-    integrations:
-      app_store_connect: Ayoub NFAOUI
+  simulator-build:
+    name: Build iOS Simulator for Appetize
     environment:
       flutter: stable
-      ios_signing:
-        bundle_identifier: com.cpu.monitor.temperature
-        provisioning_profiles:
-          - provisioning_Cpu
-        certificates:
-          - certificate
     scripts:
-      - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
       - name: Get Flutter packages
         script: flutter packages pub get
-      - name: Set up code signing
-        script: xcode-project use-profiles
-      - name: Build IPA
-        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+      - name: Build iOS Simulator
+        script: flutter build ios --simulator
+      - name: Package app for Appetize.io
+        script: |
+          cd build/ios/iphonesimulator
+          zip -r ../../../ios_simulator.zip *.app
     artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      email:
-        recipients:
-          - ayoubnfaoui0@gmail.com
-        notify:
-          success: true
-          failure: true
-      app_store_connect:
-        auth: integration
+      - ios_simulator.zip
